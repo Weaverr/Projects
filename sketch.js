@@ -3,6 +3,22 @@ let fft;
 let currentSong;
 let img;
 
+let songOptions = [  "toke",  "molly",  "24 songs",  "pop out",  "cmon",  "iloveuihateu",  "watch this",  "stop breathing",  "rokstar"];
+
+let albumOptions = [  { name: "up 2 me", songs: ["cmon", "morning mudd", "Song 3"] },
+  { name: "2 alive", songs: ["Song 4", "Song 5", "Song 6"] },
+  { name: "lyfe", songs: ["Song 7", "Song 8", "Song 9"] },
+  { name: "afterlyfe", songs: ["Song 7", "Song 8", "Song 9"] },
+];
+
+let playlistOptions = [  { name: "Playlist 1", songs: ["Song 1", "Song 4", "Song 7"] },
+  { name: "Playlist 2", songs: ["Song 2", "Song 5", "Song 8"] },
+  { name: "Playlist 3", songs: ["Song 3", "Song 6", "Song 9"] },
+];
+
+let currentOptions = [];
+let currentCategory = "";
+
 function setup() {
   frameRate = 400;
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -11,51 +27,99 @@ function setup() {
   angleMode(DEGREES);
   img = loadImage('face.jpg');
   fft = new p5.FFT();
-  
+
   // song selection
   let select = createSelect();
   select.style('font-size', '22px');
   select.style('font-family', 'Arial');
   select.position(windowWidth / 2 - 90, 10);
-  
-  select.option("Select a Song:")
-  select.option("toke");
-  select.option("molly");
-  select.option("24 songs");
-  select.option("pop out");
-  select.option("cmon");
-  select.option("iloveuihateu");
-  select.option("watch this");
-  select.option("stop breathing");
-  select.option("rokstar")
 
+  select.option("Select a Category:");
+  select.option("Songs");
+  select.option("Albums");
+  select.option("Playlists");
+  select.option("Go Back");
 
+  // update options when category is selected
+  select.changed(function() {
+    let category = select.value();
+    if (category === "Songs") {
+      currentOptions = songOptions;
+      currentCategory = "Songs";
+    } else if (category === "Albums") {
+      currentOptions = albumOptions.map((album) => album.name);
+      currentCategory = "Albums";
+    } else if (category === "Playlists") {
+      currentOptions = playlistOptions.map((playlist) => playlist.name);
+      currentCategory = "Playlists";
+    } else if (category === "Go Back") {
+      select.remove();
+      setup();
+    }
+
+    let songSelect = document.querySelector(".song-select");
+    if (songSelect) {
+      songSelect.remove();
+    }
+
+    // create new select element for songs or albums
+    if (category === "Songs" || category === "Albums") {
+      songSelect = createSelect();
+      songSelect.class("song-select");
+      songSelect.style('font-size', '22px');
+      songSelect.style('font-family', 'Arial');
+      songSelect.position(windowWidth / 2 - 90, 50);
+
+      songSelect.option("Select an Option:");
+      for (let i = 0; i < currentOptions.length; i++) {
+        songSelect.option(currentOptions[i]);
+      }
+
+      songSelect.changed(function() {
+        let songName = songSelect.value();
+        if (currentSong) {
+          currentSong.stop();
+        }
+        if (currentCategory === "Songs") {
+          currentSong = loadSound(`sounds/${songName}.mp3`, function() {
+            currentSong.play();
+          });
+        } else if (currentCategory === "Albums") {
+          let album = albumOptions.find((album) => album.name === songName);
+          if (album) {
+            let songSelect = document.querySelector(".song-select");
+            songSelect.remove();
+
+            songSelect = createSelect();
+            songSelect.class("song-select");
+            songSelect.style('font-size', '22px');
+            songSelect.style('font-family', 'Arial');
+            songSelect.position(windowWidth / 2 - 90, 90);
+
+            songSelect.option("Select a Song:");
+            for (let i = 0; i < album.songs.length; i++) {
+              songSelect.option(album.songs[i]);
+            }
+
+            songSelect.changed(function() {
+              let songName = songSelect.value();
+              if (currentSong) {
+                currentSong.stop();
+              }
+              currentSong = loadSound(`sounds/${songName}.mp3`, function() {
+                currentSong.play();
+              });
+            });
+          }
+        }
+      });
+    }
+  });
 
   // slider
   slider = createSlider(0, 100, 0);
   slider.position(windowWidth / 2 - 150, height - 100);
   slider.style('width', '300px');
-;
-
-  select.changed(function() {
-    slider.value(0);
-    let songName = select.value();
-  
-    if (currentSong) {
-      currentSong.stop();
-    }
-  
-    currentSong = loadSound(`sounds/${songName}.mp3`, function() {
-      currentSong.play();
-    });
-  });
-
-  slider.input(function() {
-    if (currentSong) {
-      let seekTime = map(slider.value(), 0, 100, 0, currentSong.duration());
-      currentSong.jump(seekTime);
-    }
-  });
 
   runtime = createDiv();
   runtime.position(windowWidth / 2 - 50, height - 70);
