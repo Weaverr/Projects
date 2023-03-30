@@ -27,6 +27,7 @@ function setup() {
   select.option("iloveuihateu");
   select.option("watch this");
   select.option("stop breathing");
+  select.option("rokstar")
 
 
 
@@ -69,8 +70,7 @@ function keyTyped() {
   if (key == 'p') {
     currentSong.pause();
 
-  }
-  else if (key == 'r'){
+  } else if (key == 'r' && !currentSong.isPlaying()) {
     currentSong.play();
   }
 }
@@ -101,6 +101,7 @@ function draw() {
   } else {
   runtime.html('');
 }
+
 }
 
 // cube function
