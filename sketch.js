@@ -177,8 +177,18 @@ function setup() {
 });
 
 volumeSlider = createSlider(0, 1, 0.5, 0.01);
-volumeSlider.position(windowWidth / 2 - 150, height - 50);
-volumeSlider.style('width', '300px');
+volumeSlider.style('height', '100px');
+volumeSlider.style('transform', 'rotate(-90deg)');
+volumeSlider.style('position', 'absolute');
+volumeSlider.style('left', '10px');
+volumeSlider.style('top', `${height - 150}px`);
+
+let volLabel = createDiv("Vol");
+volLabel.position(60, height - 190);
+volLabel.style('font-size', '20px');
+volLabel.style('font-family', 'Arial');
+volLabel.style('color', 'white');
+
 
 // slider
 slider = createSlider(0, 100, 0);
