@@ -12,7 +12,6 @@ function setup() {
   img = loadImage('face.jpg');
   fft = new p5.FFT();
   
-
   // song selection
   let select = createSelect();
   select.style('font-size', '22px');
@@ -20,7 +19,6 @@ function setup() {
   select.position(windowWidth / 2 - 90, 10);
   
   select.option("Select a Song:")
-  select.option("all");
   select.option("toke");
   select.option("molly");
   select.option("24 songs");
@@ -36,7 +34,7 @@ function setup() {
   slider = createSlider(0, 100, 0);
   slider.position(windowWidth / 2 - 150, height - 100);
   slider.style('width', '300px');
-  slider.attribute('disabled', '');
+;
 
   select.changed(function() {
     slider.value(0);
@@ -46,26 +44,9 @@ function setup() {
       currentSong.stop();
     }
   
-    if (songName === "all") {
-      let songs = ["toke", "molly", "24 songs", "pop out", "cmon", "iloveuihateu", "watch this", "stop breathing"];
-      let index = 0;
-      currentSong = loadSound(`sounds/${songs[index]}.mp3`, function() {
-        currentSong.play();
-      });
-      currentSong.onended(function() {
-        index++;
-        if (index < songs.length) {
-          currentSong = loadSound(`sounds/${songs[index]}.mp3`, function() {
-            currentSong.play();
-          });
-        }
-      });
-    } else {
-      slider.value(0);
-      currentSong = loadSound(`sounds/${songName}.mp3`, function() {
-        currentSong.play();
-      });
-    }
+    currentSong = loadSound(`sounds/${songName}.mp3`, function() {
+      currentSong.play();
+    });
   });
 
   slider.input(function() {
@@ -74,6 +55,12 @@ function setup() {
       currentSong.jump(seekTime);
     }
   });
+
+  runtime = createDiv();
+  runtime.position(windowWidth / 2 - 50, height - 70);
+  runtime.style('font-size', '20px');
+  runtime.style('font-family', 'Arial');
+  runtime.style('color', 'white');
 }
   
 
@@ -107,9 +94,14 @@ function draw() {
     let progress = map(currentSong.currentTime(), 0, currentSong.duration(), 0, 100);
     slider.value(progress);
 }
+  if (currentSong && !currentSong.isPaused()) {
+  let currentTime = currentSong.currentTime().toFixed(2);
+  let duration = currentSong.duration().toFixed(2);
+  runtime.html(`${currentTime} : ${duration}`);
+  } else {
+  runtime.html('');
 }
-
-
+}
 
 // cube function
 function mycube() {
