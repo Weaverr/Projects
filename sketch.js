@@ -180,6 +180,13 @@ slider = createSlider(0, 100, 0);
 slider.position(windowWidth / 2 - 150, height - 100);
 slider.style('width', '300px');
 
+slider.input(function() {
+  if (currentSong) {
+    let newPos = map(slider.value(), 0, 100, 0, currentSong.duration());
+    currentSong.jump(newPos);
+  }
+});
+
 runtime = createDiv();
 runtime.position(windowWidth / 2 - 50, height - 70);
 runtime.style('font-size', '20px');
