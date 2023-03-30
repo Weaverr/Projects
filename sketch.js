@@ -10,67 +10,74 @@ function setup() {
   rectMode(CENTER);
   angleMode(DEGREES);
   img = loadImage('face.jpg');
-  
-  // Create a new FFT object to analyze the sound
   fft = new p5.FFT();
   
-  // Create an input field for the song name and a "Play" button
-  let songInput = createInput();
-  songInput.style('font-size', '22px');
-  songInput.position(width / 2 - 100, height - 100);
-  songInput.size(200, 20);
+
+  // song selection
+  let select = createSelect();
+  select.style('font-size', '22px');
+  select.style('font-family', 'Arial');
+  select.position(windowWidth / 2 - 90, 10);
   
-  let playButton = createButton("Play");
-  playButton.size(100,40)
-  playButton.position(width / 2 - 45, height - 70);
-  playButton.mousePressed(function() {
-    let songName = songInput.value();
-    
-    // Stop the currently playing sound, if any
+  select.option("Select a Song:")
+  select.option("all");
+  select.option("toke");
+  select.option("molly");
+  select.option("24 songs");
+  select.option("pop out");
+  select.option("cmon");
+  select.option("iloveuihateu");
+  select.option("watch this");
+  select.option("stop breathing");
+
+
+
+  // slider
+  slider = createSlider(0, 100, 0);
+  slider.position(windowWidth / 2 - 150, height - 100);
+  slider.style('width', '300px');
+  slider.attribute('disabled', '');
+
+  select.changed(function() {
+    slider.value(0);
+    let songName = select.value();
+  
     if (currentSong) {
       currentSong.stop();
     }
-    
-    // Load and play the corresponding sound file
-    if (songName === "toke") {
-      currentSong = loadSound("toke.mp3", function() {
+  
+    if (songName === "all") {
+      let songs = ["toke", "molly", "24 songs", "pop out", "cmon", "iloveuihateu", "watch this", "stop breathing"];
+      let index = 0;
+      currentSong = loadSound(`sounds/${songs[index]}.mp3`, function() {
         currentSong.play();
       });
-    } else if (songName === "molly") {
-      currentSong = loadSound("molly.mp3", function() {
+      currentSong.onended(function() {
+        index++;
+        if (index < songs.length) {
+          currentSong = loadSound(`sounds/${songs[index]}.mp3`, function() {
+            currentSong.play();
+          });
+        }
+      });
+    } else {
+      // Load and play the selected sound file
+      currentSong = loadSound(`sounds/${songName}.mp3`, function() {
         currentSong.play();
       });
-    } else if (songName == '24 songs') {
-      currentSong = loadSound("songs.mp3", function() {
-        currentSong.play();
-      });
-    } else if (songName == 'pop out') {
-      currentSong = loadSound("popout.mp3", function() {
-        currentSong.play();
-      })
-    } else if (songName == 'cmon') {
-      currentSong = loadSound("cmon.mp3", function() {
-        currentSong.play();
-      })
-    } else if (songName == 'iloveuihateu') {
-      currentSong = loadSound("loveuhateu.mp3", function() {
-        currentSong.play();
-      })
-    } else if (songName == 'watch this') {
-      currentSong = loadSound("watchthis.mp3", function() {
-        currentSong.play();
-      })
-    } else if (songName == 'stop breathing') {
-      currentSong = loadSound("stopbreathing.mp3", function() {
-        currentSong.play();
-      })
     }
-    else {
-      alert("Invalid song name!");
+  });
+
+  slider.input(function() {
+    if (currentSong) {
+      let seekTime = map(slider.value(), 0, 100, 0, currentSong.duration());
+      currentSong.jump(seekTime);
     }
   });
 }
+  
 
+// key typed
 function keyTyped() {
   if (key == 'p') {
     currentSong.pause();
@@ -81,7 +88,7 @@ function keyTyped() {
   }
 }
 
-
+// draw function
 function draw() {
   background(80);
   camera(100, 100, -100, 0, 0, 0);
@@ -95,8 +102,16 @@ function draw() {
   rotateX(angle + random(-vibrationAmount, vibrationAmount));
   rotateY(angle + random(-vibrationAmount, vibrationAmount));
   mycube();
+
+  if (currentSong && !currentSong.isPaused()) {
+    let progress = map(currentSong.currentTime(), 0, currentSong.duration(), 0, 100);
+    slider.value(progress);
+}
 }
 
+
+
+// cube function
 function mycube() {
   push();
   texture(img);
