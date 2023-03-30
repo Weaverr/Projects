@@ -61,7 +61,7 @@ function setup() {
         }
       });
     } else {
-      // Load and play the selected sound file
+      slider.value(0);
       currentSong = loadSound(`sounds/${songName}.mp3`, function() {
         currentSong.play();
       });
