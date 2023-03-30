@@ -2,6 +2,7 @@ let angle = 0;
 let fft;
 let currentSong;
 let img;
+let volumeSlider;
 
 let songOptions = [  "toke",  "molly",  "24 songs",  "pop out",  "cmon",  "iloveuihateu",  "watch this",  "stop breathing",  "rokstar"];
 
@@ -175,6 +176,10 @@ function setup() {
 }
 });
 
+volumeSlider = createSlider(0, 1, 0.5, 0.01);
+volumeSlider.position(windowWidth / 2 - 150, height - 50);
+volumeSlider.style('width', '300px');
+
 // slider
 slider = createSlider(0, 100, 0);
 slider.position(windowWidth / 2 - 150, height - 100);
@@ -205,6 +210,8 @@ function keyTyped() {
   }
 }
 
+text(`Volume: ${volumeSlider.value()}`, windowWidth / 2 - 40, height - 80);
+
 // draw function
 function draw() {
   background(80);
@@ -221,6 +228,7 @@ function draw() {
   mycube();
 
   if (currentSong && !currentSong.isPaused()) {
+    currentSong.setVolume(volumeSlider.value());
     let progress = map(currentSong.currentTime(), 0, currentSong.duration(), 0, 100);
     slider.value(progress);
 }
