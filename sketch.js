@@ -10,11 +10,12 @@ let albumOptions = [  { name: "up 2 me", artist: "yeat", songs: ["cmon", "mornin
   { name: "2 alive", artist: "yeat", songs: ["Song 4", "Song 5", "Song 6"] },
   { name: "lyfe", artist: "yeat", songs: ["Song 7", "Song 8", "Song 9"] },
   { name: "afterlyfe", artist: "yeat", songs: ["Song 7", "Song 8", "Song 9"] },
+  { name: "singles", artist: "warwico", songs: ["free mason"] },
 ];
 
 let artistOptions = [
   { name: "yeat", albums: ["up 2 me", "2 alive", "lyfe", "afterlyfe"] },
-  { name: "Artist 2", albums: ["x"] },
+  { name: "warwico", albums: ["singles"] },
   { name: "Artist 3", albums: ["x", "x"] },
 ];
 
